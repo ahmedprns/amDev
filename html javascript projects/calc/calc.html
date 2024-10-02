@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;  /* خلفية بيضاء */
+        }
+        .calculator {
+            width: 280px;  /* تعديل عرض الحاسبة */
+            background-color: #f7f7f7;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .screen {
+            height: 70px;
+            background-color: #fff;
+            color: #333;
+            font-size: 1.8em;
+            text-align: right;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            overflow: hidden;  /* لمنع تجاوز النص لحدود الشاشة */
+            white-space: nowrap;  /* منع التفاف النص */
+            text-overflow: ellipsis;  /* عرض ... عند تجاوز النص العرض */
+            box-sizing: border-box;  /* لضمان تناسب المساحة مع الحواف */
+            border: 1px #999898 solid;
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-top: 15px;
+        }
+        .button {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            font-size: 1.5em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;  /* لضمان محاذاة الأزرار */
+        }
+        .button-row {
+            display: flex;
+        }
+        .operator {
+            background-color: #999898;
+            color: #fff;
+        }
+        .number, .equals, .clear, .backspace {
+            background-color: #76b1d2;
+            color: #333;
+        }
+        .clear {
+            background-color: #ff6666;
+        }
+        .backspace {
+            background-color: #ffcc00;
+        }
+        .equals {
+            background-color: #66cc66;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div id="screen" class="screen">0</div>
+        <div class="button-row">
+            <button class="button clear" onclick="clearScreen()">C</button>
+            <button class="button backspace" onclick="backspace()">←</button>
+            <button class="button operator" onclick="appendOperator('(')">(</button>
+            <button class="button operator" onclick="appendOperator(')')">)</button>
+        </div>
+        <div class="button-row">
+            <button class="button number" onclick="appendNumber('7')">7</button>
+            <button class="button number" onclick="appendNumber('8')">8</button>
+            <button class="button number" onclick="appendNumber('9')">9</button>
+            <button class="button operator" onclick="appendOperator('/')">/</button>
+        </div>
+        <div class="button-row">
+            <button class="button number" onclick="appendNumber('4')">4</button>
+            <button class="button number" onclick="appendNumber('5')">5</button>
+            <button class="button number" onclick="appendNumber('6')">6</button>
+            <button class="button operator" onclick="appendOperator('*')">*</button>
+        </div>
+        <div class="button-row">
+            <button class="button number" onclick="appendNumber('1')">1</button>
+            <button class="button number" onclick="appendNumber('2')">2</button>
+            <button class="button number" onclick="appendNumber('3')">3</button>
+            <button class="button operator" onclick="appendOperator('-')">-</button>
+        </div>
+        <div class="button-row">
+            <button class="button number" onclick="appendNumber('0')">0</button>
+            <button class="button number" onclick="appendOperator('.')">.</button>
+            <button class="button equals" onclick="calculateResult()">=</button>
+            <button class="button operator" onclick="appendOperator('+')">+</button>
+        </div>
+    </div>
+
+    <script>
+        let screen = document.getElementById('screen');
+        let expression = '';
+
+        function appendNumber(number) {
+            if (screen.innerHTML === '0') {
+                screen.innerHTML = number;
+            } else {
+                screen.innerHTML += number;
+            }
+            expression += number;
+        }
+
+        function appendOperator(operator) {
+            screen.innerHTML += operator;
+            expression += operator;
+        }
+
+        function clearScreen() {
+            screen.innerHTML = '0';
+            expression = '';
+        }
+
+        function backspace() {
+            if (expression.length > 0) {
+                expression = expression.slice(0, -1);
+                screen.innerHTML = screen.innerHTML.slice(0, -1);
+                if (screen.innerHTML === '') {
+                    screen.innerHTML = '0';
+                }
+            }
+        }
+
+        function calculateResult() {
+            try {
+                let result = eval(expression);  // Use eval to evaluate the expression
+                screen.innerHTML = result;
+                expression = result;
+            } catch (error) {
+                screen.innerHTML = 'Error';
+                expression = '';
+            }
+        }
+
+        // Function to handle keyboard input
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if (!isNaN(key)) {
+                // If the key is a number
+                appendNumber(key);
+            } else if (key === '+' || key === '-' || key === '*' || key === '/' || key === '(' || key === ')') {
+                // If the key is an operator
+                appendOperator(key);
+            } else if (key === 'Enter' || key === '=') {
+                // If the key is Enter or =
+                event.preventDefault();
+                calculateResult();
+            } else if (key === 'Backspace') {
+                // If the key is Backspace
+                backspace();
+            } else if (key === 'Escape') {
+                // If the key is Escape (clear screen)
+                clearScreen();
+            } else if (key === '.') {
+                appendOperator('.');
+            }
+        });
+    </script>
+</body>
+</html>
